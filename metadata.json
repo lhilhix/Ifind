@@ -1,0 +1,6 @@
+{
+  "name": "Ifind",
+  "description": "A vibrant, youthful mobile app for discovering nearby points of interest using a map-based exploration experience.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
