@@ -1,81 +1,95 @@
+import { useState } from 'react';
 import { MobileFrame } from './components/MobileFrame';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { PlaceDetailScreen } from './screens/PlaceDetailScreen';
 import { Place } from './types';
+import { AnimatePresence, motion } from 'motion/react';
 
-const CAFE_PLACE: Place = {
-  id: '1',
-  name: 'Café Central',
-  category: 'cafe',
-  rating: 4.8,
-  distance: '200m',
-  image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop',
-  tags: ['Especialidade Café', 'Opções Vegan', 'Pet Friendly'],
-  description: 'Um refúgio acolhedor no coração da cidade, onde o café artesanal encontra um ambiente moderno e vibrante. Perfeito para trabalhar ou relaxar com amigos.',
-  location: { lat: 38.7126, lng: -9.1393 },
-  gallery: [
-    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=400&auto=format&fit=crop'
-  ]
-};
-
-const VIEWPOINT_PLACE: Place = {
-  id: '2',
-  name: 'Miradouro de Santa Catarina',
-  category: 'viewpoint',
-  rating: 4.9,
-  distance: '800m',
-  image: 'https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=800&auto=format&fit=crop',
-  tags: ['Fotografia', 'Pôr do Sol', 'Vista Panorâmica'],
-  description: 'Um dos locais mais icónicos para ver o pôr do sol em Lisboa. Oferece uma vista inigualável sobre o rio Tejo e a Ponte 25 de Abril.',
-  location: { lat: 38.7095, lng: -9.1476 },
-  highlights: [
-    'Melhor spot para pôr do sol',
-    'Ambiente jovem e relaxado',
-    'Frequentado por músicos de rua'
-  ],
-  gallery: [
-    'https://images.unsplash.com/photo-1558236714-d1ae5da8e60b?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1528114039593-4366cc08227d?q=80&w=400&auto=format&fit=crop'
-  ]
-};
+type Screen = 'welcome' | 'home' | 'detail';
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+
+  const handleStart = () => {
+    setCurrentScreen('home');
+  };
+
+  const handlePlaceSelect = (place: Place) => {
+    setSelectedPlace(place);
+    setCurrentScreen('detail');
+  };
+
+  const handleBack = () => {
+    setCurrentScreen('home');
+    setSelectedPlace(null);
+  };
+
   return (
-    <div className="min-h-screen w-full bg-slate-50 p-12 overflow-x-auto no-scrollbar">
-      <div className="max-w-[1700px] mx-auto flex flex-col gap-12">
-        {/* Branding & Header */}
-        <div className="flex flex-col items-center text-center gap-3">
-          <div className="w-16 h-16 bg-brand-purple rounded-2xl flex items-center justify-center shadow-xl shadow-brand-purple/20 rotate-3">
-            <span className="text-white font-display text-2xl font-bold italic">If</span>
-          </div>
-          <h1 className="text-4xl font-display font-bold text-slate-800">Ifind Design System</h1>
-          <p className="text-slate-500 font-medium max-w-lg">
-            Um sistema vibrante e jovem para exploração urbana. Descobre lugares, vive experiências e conecta-te com o que te rodeia.
-          </p>
+    <div className="min-h-screen w-full bg-slate-900 flex items-center justify-center p-4">
+      {/* Desktop Helper / Instructions overlay */}
+      <div className="fixed top-8 left-8 hidden xl:flex flex-col gap-4 text-white/40 max-w-xs scale-90 origin-top-left pointer-events-none">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-brand-purple rounded-lg flex items-center justify-center text-white font-bold italic text-sm">If</div>
+          <span className="font-display font-bold tracking-wider uppercase text-xs">Ifind App</span>
         </div>
-
-        {/* Mockup Presentation Grid */}
-        <div className="flex gap-12 px-4 pb-12 overflow-x-auto no-scrollbar justify-center">
-          <MobileFrame title="1. Welcome Screen">
-            <WelcomeScreen />
-          </MobileFrame>
-
-          <MobileFrame title="2. Home (Mapa)">
-            <HomeScreen />
-          </MobileFrame>
-
-          <MobileFrame title="3. Local (Café)">
-            <PlaceDetailScreen place={CAFE_PLACE} />
-          </MobileFrame>
-
-          <MobileFrame title="4. Local (Miradouro)">
-            <PlaceDetailScreen place={VIEWPOINT_PLACE} />
-          </MobileFrame>
+        <div className="h-[1px] bg-white/10 w-full" />
+        <p className="text-xs leading-relaxed">
+          Esta é uma aplicação interativa mobile. Podes navegar entre o ecrã de boas-vindas, o mapa de exploração e os detalhes de cada local.
+        </p>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-[10px] uppercase font-bold">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-purple" />
+            Mapa Interativo
+          </div>
+          <div className="flex items-center gap-2 text-[10px] uppercase font-bold">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-pink" />
+            Filtros por Categoria
+          </div>
+          <div className="flex items-center gap-2 text-[10px] uppercase font-bold">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-yellow" />
+            Detalhes de Lugares
+          </div>
         </div>
       </div>
+
+      <div className="relative group">
+        {/* Glow Effect */}
+        <div className="absolute -inset-20 bg-brand-purple/20 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" />
+        
+        <MobileFrame title={currentScreen === 'welcome' ? 'Start Journey' : 'v1.0'} className="shadow-2xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentScreen + (selectedPlace?.id || '')}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="h-full w-full"
+            >
+              {currentScreen === 'welcome' && (
+                <WelcomeScreen onStart={handleStart} />
+              )}
+              {currentScreen === 'home' && (
+                <HomeScreen onPlaceSelect={handlePlaceSelect} />
+              )}
+              {currentScreen === 'detail' && selectedPlace && (
+                <PlaceDetailScreen place={selectedPlace} onBack={handleBack} />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </MobileFrame>
+      </div>
+
+      {/* Legend for API Key */}
+      {!process.env.GOOGLE_MAPS_PLATFORM_KEY && (
+        <div className="fixed bottom-8 right-8 bg-slate-800/80 backdrop-blur border border-white/10 p-4 rounded-2xl hidden md:block max-w-[280px]">
+           <p className="text-[10px] text-white/60 leading-relaxed">
+             <strong className="text-white">Dica:</strong> Para ver o mapa real da Google, adiciona a tua <code className="text-brand-purple bg-brand-purple/10 px-1 rounded">GOOGLE_MAPS_PLATFORM_KEY</code> às Secrets do AI Studio.
+           </p>
+        </div>
+      )}
     </div>
   );
 }

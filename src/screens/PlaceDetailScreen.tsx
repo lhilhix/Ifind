@@ -6,19 +6,21 @@ import { Place } from '../types';
 
 interface PlaceDetailScreenProps {
   place: Place;
+  onBack: () => void;
 }
 
-export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({ place }) => {
+export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({ place, onBack }) => {
   return (
-    <div className="h-full bg-white flex flex-col no-scrollbar overflow-y-auto pb-12">
+    <div className="h-full bg-white flex flex-col no-scrollbar overflow-y-auto pb-12 relative animate-in fade-in slide-in-from-right duration-300">
       {/* Header Image */}
       <div className="h-[40%] relative flex-shrink-0">
         <img src={place.image} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
         
         {/* Top Controls */}
-        <div className="absolute top-4 w-full flex justify-between px-6">
+        <div className="absolute top-4 w-full flex justify-between px-6 z-20">
           <motion.button 
+            onClick={onBack}
             whileTap={{ scale: 0.9 }}
             className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 text-white"
           >
@@ -41,7 +43,7 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({ place }) =
         </div>
 
         {/* Name & Quick Info (Overlay) */}
-        <div className="absolute bottom-6 px-6 w-full">
+        <div className="absolute bottom-6 px-6 w-full z-20">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -50,7 +52,9 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({ place }) =
             <div className="flex items-center gap-2">
               <span className={cn(
                 "px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow-lg",
-                place.category === 'cafe' ? "bg-brand-pink" : "bg-brand-blue"
+                place.category === 'cafe' ? "bg-brand-pink" : 
+                place.category === 'viewpoint' ? "bg-brand-blue" :
+                place.category === 'food' ? "bg-orange-500" : "bg-green-500"
               )}>
                 {place.category}
               </span>

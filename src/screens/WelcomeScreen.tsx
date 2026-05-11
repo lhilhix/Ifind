@@ -2,7 +2,11 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Navigation, Compass } from 'lucide-react';
 
-export const WelcomeScreen: React.FC = () => {
+interface WelcomeScreenProps {
+  onStart: () => void;
+}
+
+export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   return (
     <div className="h-full relative overflow-hidden bg-gradient-to-br from-brand-purple via-brand-pink to-brand-yellow flex flex-col justify-end p-8 pb-16">
       {/* Abstract Background Elements */}
@@ -46,6 +50,7 @@ export const WelcomeScreen: React.FC = () => {
         </p>
 
         <motion.button
+          onClick={onStart}
           whileTap={{ scale: 0.95 }}
           className="mt-8 py-5 px-10 bg-white text-brand-purple rounded-3xl font-bold text-xl shadow-2xl hover:shadow-white/20 transition-all flex items-center justify-between group"
         >
